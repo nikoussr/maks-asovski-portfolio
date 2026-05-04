@@ -1,5 +1,7 @@
 # Портфолио видеографа
 
+## Ссылка - https://asovskii.com
+
 Сайт-портфолио для видеографа и монтажёра Максима Асовского.
 Минималистичный дизайн, кастомная CMS, автодеплой через git.
 
@@ -29,6 +31,16 @@
 - Cache-Control заголовки для статики и загрузок
 
 ---
+## Скрины
+<img width="1270" height="623" alt="image" src="https://github.com/user-attachments/assets/900f8952-71ef-44ce-a8c4-5cf4e8545449" />
+<img width="1248" height="1019" alt="image" src="https://github.com/user-attachments/assets/3da0329b-2b90-4368-a7bb-ed1579f57fc1" />
+<img width="1243" height="1138" alt="image" src="https://github.com/user-attachments/assets/8f0c84e1-5e37-4490-bc62-84364f1962c2" />
+<img width="1248" height="594" alt="image" src="https://github.com/user-attachments/assets/b0485dd3-e936-445a-b8bf-d3f4a834f3f6" />
+<img width="1262" height="429" alt="image" src="https://github.com/user-attachments/assets/83dfa481-4649-470f-af50-b42905a6e268" />
+<img width="1248" height="1202" alt="image" src="https://github.com/user-attachments/assets/e9c25188-1a84-42c4-a7e0-fa1e41ffcff6" />
+<img width="1242" height="1280" alt="image" src="https://github.com/user-attachments/assets/472918a8-f993-4cf5-8c74-23185e11d52c" />
+<img width="1246" height="1278" alt="image" src="https://github.com/user-attachments/assets/17a4d46b-1305-47f2-a831-5edb33550cfe" />
+
 
 ## Стек
 
