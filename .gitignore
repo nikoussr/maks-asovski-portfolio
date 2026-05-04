@@ -1,0 +1,29 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+
+# Uploads (user content, not source code)
+uploads/
+
+# IDE
+.idea/
+.vscode/
+
+# Claude Code
+.claude/
+
+# Temp files
+tmp_*_key
+tmp_*_key.pub
+
+# Font archives
+*.zip
+
+# Source assets (processed versions committed instead)
+лого.jpg

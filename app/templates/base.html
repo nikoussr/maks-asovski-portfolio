@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Portfolio{% endblock %}</title>
+  <meta name="description" content="{% block description %}Portfolio{% endblock %}">
+  <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+  <link rel="apple-touch-icon" href="/static/img/favicon-180.png">
+  <link rel="stylesheet" href="/static/css/fonts.css">
+  <link rel="stylesheet" href="/static/css/main.css?v=14">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <nav class="nav" id="main-nav">
+    <a href="/" class="nav-logo">
+      <span class="nav-logo-name">MAXIM ASOVSKII</span>
+      <span class="nav-logo-sub">Video Editor, Motion Designer, AI Artist</span>
+    </a>
+    <ul class="nav-links">
+      {% for cat in CATEGORIES %}
+      <li>
+        <a href="/?category={{ cat.slug }}"
+           {% if active_category is defined and active_category == cat.slug %}class="active"{% endif %}>
+          {{ cat.label }}
+        </a>
+      </li>
+      {% endfor %}
+      <li><a href="/about" {% if request.url.path == '/about' %}class="active"{% endif %}>About</a></li>
+    </ul>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    <span>© {{ now_year }} Максим Асовский</span>
+    <span>Video Editor, Motion Designer, AI Artist</span>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

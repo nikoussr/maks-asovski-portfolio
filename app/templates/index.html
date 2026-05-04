@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if projects %}
+<main class="projects-grid">
+  {% for project in projects %}
+  <a href="/projects/{{ project.slug }}" class="project-card">
+    {% if project.cover_image %}
+    <img class="project-card-img" src="{{ project.cover_image }}" alt="{{ project.title }}" loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}">
+    {% else %}
+    <div class="project-card-placeholder">Нет обложки</div>
+    {% endif %}
+    <div class="project-card-overlay">
+      <p class="project-card-title">{{ project.title }}</p>
+      <p class="project-card-meta">
+        {{ role_list(project.role) | join(' · ') }}{% if project.year %} · {{ project.year }}{% endif %}
+      </p>
+    </div>
+  </a>
+  {% endfor %}
+</main>
+{% else %}
+<div class="empty-state" style="padding-top: 180px;">
+  <p>Проекты появятся здесь</p>
+</div>
+{% endif %}
+{% endblock %}

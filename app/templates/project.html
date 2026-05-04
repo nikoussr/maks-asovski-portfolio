@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }}{% endblock %}
+{% block description %}{{ project.description[:160] if project.description else project.title }}{% endblock %}
+
+{% block content %}
+<div class="project-page">
+  {% if project.video_embed %}
+  {% set video = resolve_video(project.video_embed) %}
+  <div class="project-video-wrap{% if video.type == 'video' %} project-video-native{% endif %}">
+    {% if video.type == 'raw' %}
+      {{ video.html | safe }}
+    {% elif video.type == 'video' %}
+      <video src="{{ video.url }}" controls playsinline preload="metadata"></video>
+    {% else %}
+      <iframe src="{{ video.url }}" frameborder="0" allowfullscreen
+              allow="autoplay; fullscreen; picture-in-picture"></iframe>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="project-content">
+    <a href="/" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      Все работы
+    </a>
+
+    <div class="project-header">
+      <h1 class="project-name">{{ project.title }}</h1>
+      <ul class="project-meta-list">
+        {% if project.client %}
+        <li class="project-meta-item">
+          <span class="project-meta-label">Клиент</span>
+          <span class="project-meta-value">{{ project.client }}</span>
+        </li>
+        {% endif %}
+        {% if project.year %}
+        <li class="project-meta-item">
+          <span class="project-meta-label">Год</span>
+          <span class="project-meta-value">{{ project.year }}</span>
+        </li>
+        {% endif %}
+        <li class="project-meta-item">
+          <span class="project-meta-label">Роль</span>
+          <span class="project-meta-value">
+            <span class="role-badges">
+              {% for r in role_list(project.role) %}
+              <span class="role-badge">{{ r }}</span>
+              {% endfor %}
+            </span>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    {% if project.description %}
+    <p class="project-description">{{ project.description }}</p>
+    {% endif %}
+
+    {% if project.images %}
+    <p class="section-label">Процесс</p>
+    <div class="process-grid">
+      {% for img in project.images %}
+      <div>
+        <img class="process-img" src="{{ img.file_path }}" alt="{{ img.caption or project.title }}" loading="lazy">
+        {% if img.caption %}<p class="process-caption">{{ img.caption }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

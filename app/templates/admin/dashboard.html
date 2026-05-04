@@ -1,0 +1,72 @@
+{% extends "admin/base.html" %}
+{% set active = 'projects' %}
+
+{% block title %}Проекты{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+  <h1 class="admin-page-title">Проекты</h1>
+  <a href="/admin/projects/new" class="btn btn-primary">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Добавить
+  </a>
+</div>
+
+{% if projects %}
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Обложка</th>
+      <th>Название</th>
+      <th>Год</th>
+      <th>Статус</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for project in projects %}
+    <tr>
+      <td style="color: var(--text-muted); font-size: 12px;">{{ project.display_order }}</td>
+      <td>
+        {% if project.cover_image %}
+        <img src="{{ project.cover_image }}" alt="" style="width:60px;height:40px;object-fit:cover;filter:brightness(0.8);">
+        {% else %}
+        <div style="width:60px;height:40px;background:var(--border);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:10px;color:var(--text-muted);">—</span>
+        </div>
+        {% endif %}
+      </td>
+      <td>
+        <strong style="font-weight:400;">{{ project.title }}</strong>
+        <br>
+        <span style="font-size:12px;color:var(--text-muted);">/projects/{{ project.slug }}</span>
+      </td>
+      <td style="color:var(--text-muted);font-size:13px;">{{ project.year or '—' }}</td>
+      <td>
+        {% if project.is_published %}
+        <span class="badge badge-published">Опубликован</span>
+        {% else %}
+        <span class="badge badge-draft">Черновик</span>
+        {% endif %}
+      </td>
+      <td>
+        <div class="td-actions">
+          <a href="/admin/projects/{{ project.id }}/edit" class="btn btn-secondary btn-sm">Редактировать</a>
+          <form method="post" action="/admin/projects/{{ project.id }}/delete"
+                onsubmit="return confirm('Удалить проект «{{ project.title }}»?')">
+            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div style="padding: 80px 0; text-align: center; color: var(--text-muted);">
+  <p style="font-size: 14px; margin-bottom: 24px;">Проектов пока нет</p>
+  <a href="/admin/projects/new" class="btn btn-primary">Добавить первый проект</a>
+</div>
+{% endif %}
+{% endblock %}

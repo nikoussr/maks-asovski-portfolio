@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+{% set active = 'settings' %}
+
+{% block title %}Настройки{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+  <h1 class="admin-page-title">Настройки сайта</h1>
+</div>
+
+<form method="post" action="/admin/settings" enctype="multipart/form-data">
+
+  <div class="form-group">
+    <label class="form-label">Фото (страница «О себе»)</label>
+    {% if settings and settings.photo_path %}
+    <div class="cover-preview">
+      <img src="{{ settings.photo_path }}" alt="Текущее фото">
+    </div>
+    {% endif %}
+    <div class="upload-zone" onclick="this.querySelector('input').click()" style="margin-top: 12px;">
+      <input type="file" name="photo" accept="image/*" onchange="showFileName(this, 'photo-name')">
+      <label class="upload-zone-label">Загрузить фото</label>
+      <p class="upload-zone-hint" id="photo-name">JPG, PNG — до 10 МБ</p>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="bio">О себе (биография)</label>
+    <textarea class="form-control" id="bio" name="bio" rows="6"
+              placeholder="Расскажите о себе...">{{ settings.bio if settings else '' }}</textarea>
+  </div>
+
+  <hr class="section-divider">
+
+  <p class="form-label" style="margin-bottom: 20px;">Контакты</p>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label" for="telegram">Telegram</label>
+      <input class="form-control" type="text" id="telegram" name="telegram"
+             placeholder="@username"
+             value="{{ settings.telegram if settings else '' }}">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="instagram">Instagram</label>
+      <input class="form-control" type="text" id="instagram" name="instagram"
+             placeholder="@username"
+             value="{{ settings.instagram if settings else '' }}">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label" for="vk">ВКонтакте</label>
+      <input class="form-control" type="text" id="vk" name="vk"
+             placeholder="id или username"
+             value="{{ settings.vk if settings else '' }}">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="email">Email</label>
+      <input class="form-control" type="email" id="email" name="email"
+             placeholder="mail@example.com"
+             value="{{ settings.email if settings else '' }}">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="youtube">YouTube (полная ссылка на канал)</label>
+    <input class="form-control" type="url" id="youtube" name="youtube"
+           placeholder="https://youtube.com/@channel"
+           value="{{ settings.youtube if settings else '' }}">
+  </div>
+
+  <div style="margin-top: 32px;">
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+  </div>
+</form>
+
+<script>
+function showFileName(input, targetId) {
+  const target = document.getElementById(targetId);
+  if (input.files.length) {
+    target.textContent = input.files[0].name;
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,275 @@
+{% extends "admin/base.html" %}
+{% set active = 'projects' %}
+
+{% block title %}{% if action == 'edit' %}Редактировать проект{% else %}Новый проект{% endif %}{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+  <h1 class="admin-page-title">
+    {% if action == 'edit' %}Редактировать: {{ project.title }}{% else %}Новый проект{% endif %}
+  </h1>
+  <a href="/admin" class="btn btn-secondary">Назад</a>
+</div>
+
+<form method="post"
+      action="{% if action == 'edit' %}/admin/projects/{{ project.id }}/edit{% else %}/admin/projects/new{% endif %}"
+      enctype="multipart/form-data">
+
+  <div class="form-row">
+    <div class="form-group" style="grid-column: span 2;">
+      <label class="form-label" for="title">Название *</label>
+      <input class="form-control" type="text" id="title" name="title"
+             value="{{ project.title if project else '' }}" required>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label" for="slug">Slug (URL)</label>
+      <input class="form-control" type="text" id="slug" name="slug"
+             value="{{ project.slug if project else '' }}"
+             placeholder="auto-из-названия">
+      <p class="form-hint">Оставьте пустым — сгенерируется автоматически</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Категории на сайте</label>
+      {% set cur_cats = category_list(project.categories if project else '') %}
+      <div class="roles-checklist">
+        {% for cat in CATEGORIES %}
+        <label class="role-check-item">
+          <input type="checkbox" name="cat_checks" value="{{ cat.slug }}"
+                 {% if cat.slug in cur_cats %}checked{% endif %}>
+          <span>{{ cat.label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+      <p class="form-hint">В каких разделах показывать проект</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Роли</label>
+      {% set cur_roles = role_list(project.role if project else '') %}
+      <div class="roles-checklist">
+        {% for preset in ROLE_PRESETS %}
+        <label class="role-check-item">
+          <input type="checkbox" name="role_checks" value="{{ preset }}"
+                 {% if preset in cur_roles %}checked{% endif %}>
+          <span>{{ preset }}</span>
+        </label>
+        {% endfor %}
+      </div>
+      {% set custom_roles = cur_roles | reject('in', ROLE_PRESETS) | list %}
+      <input class="form-control" type="text" name="role_custom"
+             value="{{ custom_roles | join(', ') }}"
+             placeholder="Другие роли через запятую..."
+             style="margin-top: 10px;">
+      <p class="form-hint">Отметьте нужные и/или введите свои через запятую</p>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label" for="client">Клиент</label>
+      <input class="form-control" type="text" id="client" name="client"
+             value="{{ project.client if project else '' }}">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="year">Год</label>
+      <input class="form-control" type="number" id="year" name="year"
+             value="{{ project.year if project and project.year else '' }}"
+             min="2000" max="2099">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="display_order">Порядок</label>
+      <input class="form-control" type="number" id="display_order" name="display_order"
+             value="{{ project.display_order or 0 }}" min="0">
+      <p class="form-hint">Меньше = выше в сетке</p>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="description">Описание</label>
+    <textarea class="form-control" id="description" name="description" rows="5">{{ project.description if project else '' }}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Видео</label>
+
+    {% set has_local_video = project and project.video_embed and project.video_embed.startswith('/uploads/') %}
+
+    {% if has_local_video %}
+    <div style="margin-bottom: 12px;">
+      <video src="{{ project.video_embed }}" controls playsinline preload="metadata"
+             style="width:100%;max-height:320px;background:#000;border-radius:4px;"></video>
+      <p class="form-hint">Текущее видео. Загрузите новый файл или вставьте ссылку ниже, чтобы заменить.</p>
+    </div>
+    {% endif %}
+
+    <div class="upload-zone" onclick="this.querySelector('input').click()" style="margin-bottom: 12px;">
+      <input type="file" name="video_file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo"
+             onchange="showFileName(this, 'video-name')">
+      <label class="upload-zone-label">Загрузить видеофайл</label>
+      <p class="upload-zone-hint" id="video-name">MP4, WebM, MOV</p>
+    </div>
+
+    <p class="form-hint" style="text-align:center; margin: 8px 0;">— или вставьте ссылку / iframe-код —</p>
+
+    <textarea class="form-control" id="video_embed" name="video_embed" rows="3"
+              placeholder="Ссылка на YouTube / Vimeo / ВКонтакте / iframe-код">{% if not has_local_video %}{{ project.video_embed if project else '' }}{% endif %}</textarea>
+    <div style="margin-top: 10px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 2;">
+      <strong style="color: var(--text-dim); display: block; margin-bottom: 6px;">Ссылки:</strong>
+      <b style="color: var(--text-dim);">YouTube / Vimeo</b> — обычная ссылка, например:
+      <code style="background:rgba(255,255,255,0.06);padding:1px 6px;">https://www.youtube.com/watch?v=ABC123</code><br>
+      <b style="color: var(--text-dim);">ВКонтакте / Яндекс Диск</b> — <em>Поделиться → Код для вставки</em> → скопируйте весь &lt;iframe&gt; код
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="form-group">
+    <label class="form-label">Обложка проекта</label>
+    {% if project and project.cover_image %}
+    <div class="cover-preview">
+      <img src="{{ project.cover_image }}" alt="Текущая обложка">
+      <p class="form-hint" style="margin-top: 8px;">Загрузите новую, чтобы заменить текущую</p>
+    </div>
+    {% endif %}
+    <div class="upload-zone" onclick="this.querySelector('input').click()" style="margin-top: 12px;">
+      <input type="file" name="cover_image" accept="image/*" onchange="showFileName(this, 'cover-name')">
+      <label class="upload-zone-label">Нажмите для выбора файла</label>
+      <p class="upload-zone-hint" id="cover-name">JPG, PNG, WEBP — до 10 МБ</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="form-group">
+    <label class="form-label">Фото процесса</label>
+
+    {% if project and project.images %}
+    <div class="img-thumbs">
+      {% for img in project.images %}
+      <div class="img-thumb" id="img-{{ img.id }}">
+        <img src="{{ img.file_path }}" alt="">
+        <button type="button" class="img-thumb-delete" title="Удалить"
+                onclick="deleteImage({{ img.id }})">×</button>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="form-hint" style="margin-top: 12px;">Добавить ещё фото:</p>
+    {% endif %}
+
+    <div class="upload-zone" onclick="this.querySelector('input').click()" style="margin-top: 12px;">
+      <input type="file" name="process_images" accept="image/*" multiple
+             onchange="showFileName(this, 'process-name')">
+      <label class="upload-zone-label">Выбрать фотографии процесса</label>
+      <p class="upload-zone-hint" id="process-name">Можно выбрать несколько файлов</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="form-row" style="align-items: center;">
+    <div class="form-check">
+      <input type="checkbox" id="is_published" name="is_published" value="true"
+             {% if project and project.is_published %}checked{% endif %}>
+      <label class="form-check-label" for="is_published">Опубликовать на сайте</label>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" id="is_featured" name="is_featured" value="true"
+             {% if project and project.is_featured %}checked{% endif %}>
+      <label class="form-check-label" for="is_featured">Показывать на главной странице</label>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px; display: flex; gap: 12px;">
+    <button type="submit" class="btn btn-primary">
+      {% if action == 'edit' %}Сохранить изменения{% else %}Создать проект{% endif %}
+    </button>
+    <a href="/admin" class="btn btn-secondary">Отмена</a>
+  </div>
+</form>
+
+<div id="upload-progress-wrap" style="display:none; margin-top:24px; padding:20px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:6px;">
+  <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+    <span style="font-size:13px; color:var(--text-dim);">Загрузка видео...</span>
+    <span id="upload-pct" style="font-size:13px; color:var(--text-dim);">0%</span>
+  </div>
+  <div style="height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
+    <div id="upload-bar" style="height:100%; width:0%; background:var(--accent); border-radius:2px; transition:width 0.2s ease;"></div>
+  </div>
+  <p id="upload-status" style="margin-top:10px; font-size:12px; color:var(--text-muted);"></p>
+</div>
+
+<script>
+function showFileName(input, targetId) {
+  const target = document.getElementById(targetId);
+  if (input.files.length === 1) {
+    target.textContent = input.files[0].name;
+  } else if (input.files.length > 1) {
+    target.textContent = `Выбрано файлов: ${input.files.length}`;
+  }
+}
+
+function deleteImage(imageId) {
+  if (!confirm('Удалить фото?')) return;
+  fetch(`/admin/images/${imageId}/delete`, { method: 'POST' })
+    .then(() => {
+      const el = document.getElementById(`img-${imageId}`);
+      if (el) el.remove();
+    });
+}
+
+(function () {
+  const form = document.querySelector('form');
+  if (!form) return;
+
+  form.addEventListener('submit', function (e) {
+    const videoInput = form.querySelector('input[name="video_file"]');
+    if (!videoInput || !videoInput.files.length) return; // нет видео — обычный сабмит
+
+    e.preventDefault();
+
+    const progressWrap = document.getElementById('upload-progress-wrap');
+    const bar           = document.getElementById('upload-bar');
+    const pctLabel      = document.getElementById('upload-pct');
+    const statusLabel   = document.getElementById('upload-status');
+    const submitBtn     = form.querySelector('button[type="submit"]');
+
+    progressWrap.style.display = 'block';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Загрузка...';
+
+    const file = videoInput.files[0];
+    const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+    statusLabel.textContent = `${file.name} · ${sizeMB} МБ`;
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener('progress', function (e) {
+      if (!e.lengthComputable) return;
+      const pct = Math.round(e.loaded / e.total * 100);
+      bar.style.width = pct + '%';
+      pctLabel.textContent = pct + '%';
+      const loadedMB = (e.loaded / 1024 / 1024).toFixed(1);
+      statusLabel.textContent = `${file.name} · ${loadedMB} / ${sizeMB} МБ`;
+    });
+
+    xhr.addEventListener('load', function () {
+      bar.style.width = '100%';
+      pctLabel.textContent = '100%';
+      statusLabel.textContent = 'Готово, сохраняем...';
+      window.location.href = xhr.responseURL || form.action;
+    });
+
+    xhr.addEventListener('error', function () {
+      statusLabel.textContent = 'Ошибка загрузки. Попробуйте ещё раз.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = '{% if action == "edit" %}Сохранить изменения{% else %}Создать проект{% endif %}';
+    });
+
+    xhr.open('POST', form.action);
+    xhr.send(new FormData(form));
+  });
+})();
+</script>
+{% endblock %}
