@@ -42,6 +42,31 @@ function initImageFade() {
 
 document.addEventListener('DOMContentLoaded', initImageFade);
 
+// ─── Justified process grid (iPhone gallery style) ────────────────────────────
+function initJustifiedGrid() {
+  const grid = document.querySelector('.process-grid');
+  if (!grid) return;
+  const ROW_H = 280;
+
+  function applyRatio(item, img) {
+    if (img.naturalWidth && img.naturalHeight) {
+      item.style.flexBasis = (img.naturalWidth / img.naturalHeight * ROW_H) + 'px';
+    }
+  }
+
+  grid.querySelectorAll('div').forEach(item => {
+    const img = item.querySelector('.process-img');
+    if (!img) return;
+    if (img.complete && img.naturalWidth) {
+      applyRatio(item, img);
+    } else {
+      img.addEventListener('load', () => applyRatio(item, img), { once: true });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initJustifiedGrid);
+
 // ─── Lightbox for process images ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const processImgs = document.querySelectorAll('.process-img');

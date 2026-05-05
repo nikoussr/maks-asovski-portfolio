@@ -329,14 +329,22 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 }
 
 .process-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 4px;
+}
+
+.process-grid > div {
+  height: 280px;
+  flex-grow: 1;
+  overflow: hidden;
+  min-width: 120px;
 }
 
 .process-img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   display: block;
   filter: brightness(0.9);
   transition: filter 0.3s;
