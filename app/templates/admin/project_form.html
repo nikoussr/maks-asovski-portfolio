@@ -32,18 +32,64 @@
       <p class="form-hint">Оставьте пустым — сгенерируется автоматически</p>
     </div>
     <div class="form-group">
-      <label class="form-label">Категории на сайте</label>
+      <label class="form-label">Размещение</label>
       {% set cur_cats = category_list(project.categories if project else '') %}
-      <div class="roles-checklist">
-        {% for cat in CATEGORIES %}
-        <label class="role-check-item">
-          <input type="checkbox" name="cat_checks" value="{{ cat.slug }}"
-                 {% if cat.slug in cur_cats %}checked{% endif %}>
-          <span>{{ cat.label }}</span>
-        </label>
-        {% endfor %}
+      <div class="placement-list">
+
+        <div class="placement-item">
+          <label class="placement-label">
+            <input type="checkbox" class="placement-cb" name="is_featured" value="true"
+                   {% if project and project.is_featured %}checked{% endif %}>
+            <span class="placement-name">Главная страница</span>
+          </label>
+          <div class="placement-order{% if not (project and project.is_featured) %} hidden{% endif %}">
+            <span class="placement-order-label">Место</span>
+            <input type="number" class="placement-order-input" name="featured_order"
+                   value="{{ project.featured_order or 1 if project else 1 }}" min="1">
+          </div>
+        </div>
+
+        <div class="placement-item">
+          <label class="placement-label">
+            <input type="checkbox" class="placement-cb" name="cat_checks" value="ai-video"
+                   {% if 'ai-video' in cur_cats %}checked{% endif %}>
+            <span class="placement-name">AI Video</span>
+          </label>
+          <div class="placement-order{% if 'ai-video' not in cur_cats %} hidden{% endif %}">
+            <span class="placement-order-label">Место</span>
+            <input type="number" class="placement-order-input" name="order_ai_video"
+                   value="{{ project.order_ai_video or 1 if project else 1 }}" min="1">
+          </div>
+        </div>
+
+        <div class="placement-item">
+          <label class="placement-label">
+            <input type="checkbox" class="placement-cb" name="cat_checks" value="motion-design"
+                   {% if 'motion-design' in cur_cats %}checked{% endif %}>
+            <span class="placement-name">Motion Design</span>
+          </label>
+          <div class="placement-order{% if 'motion-design' not in cur_cats %} hidden{% endif %}">
+            <span class="placement-order-label">Место</span>
+            <input type="number" class="placement-order-input" name="order_motion_design"
+                   value="{{ project.order_motion_design or 1 if project else 1 }}" min="1">
+          </div>
+        </div>
+
+        <div class="placement-item">
+          <label class="placement-label">
+            <input type="checkbox" class="placement-cb" name="cat_checks" value="commercial"
+                   {% if 'commercial' in cur_cats %}checked{% endif %}>
+            <span class="placement-name">Commercial Videos</span>
+          </label>
+          <div class="placement-order{% if 'commercial' not in cur_cats %} hidden{% endif %}">
+            <span class="placement-order-label">Место</span>
+            <input type="number" class="placement-order-input" name="order_commercial"
+                   value="{{ project.order_commercial or 1 if project else 1 }}" min="1">
+          </div>
+        </div>
+
       </div>
-      <p class="form-hint">В каких разделах показывать проект</p>
+      <p class="form-hint">Включите раздел — появится поле с номером позиции</p>
     </div>
     <div class="form-group">
       <label class="form-label">Роли</label>
@@ -77,18 +123,6 @@
       <input class="form-control" type="number" id="year" name="year"
              value="{{ project.year if project and project.year else '' }}"
              min="2000" max="2099">
-    </div>
-    <div class="form-group">
-      <label class="form-label" for="display_order">Порядок в категории</label>
-      <input class="form-control" type="number" id="display_order" name="display_order"
-             value="{{ project.display_order or 0 }}" min="0">
-      <p class="form-hint">Меньше = выше в категории</p>
-    </div>
-    <div class="form-group">
-      <label class="form-label" for="featured_order">Порядок на главной</label>
-      <input class="form-control" type="number" id="featured_order" name="featured_order"
-             value="{{ project.featured_order or 0 }}" min="0">
-      <p class="form-hint">Меньше = выше на главной странице</p>
     </div>
   </div>
 
@@ -179,11 +213,6 @@
       <input type="checkbox" id="is_published" name="is_published" value="true"
              {% if project and project.is_published %}checked{% endif %}>
       <label class="form-check-label" for="is_published">Опубликовать на сайте</label>
-    </div>
-    <div class="form-check">
-      <input type="checkbox" id="is_featured" name="is_featured" value="true"
-             {% if project and project.is_featured %}checked{% endif %}>
-      <label class="form-check-label" for="is_featured">Показывать на главной странице</label>
     </div>
   </div>
 
@@ -277,5 +306,33 @@ function deleteImage(imageId) {
     xhr.send(new FormData(form));
   });
 })();
+
+// Placement toggles
+document.querySelectorAll('.placement-cb').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const order = cb.closest('.placement-item').querySelector('.placement-order');
+    order.classList.toggle('hidden', !cb.checked);
+  });
+});
 </script>
+
+<style>
+.placement-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.placement-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--bg); border: 1px solid var(--border-light);
+  border-radius: 6px; transition: border-color 0.2s;
+}
+.placement-item:has(.placement-cb:checked) { border-color: var(--accent); }
+.placement-label { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+.placement-name { font-size: 14px; color: var(--text); }
+.placement-order { display: flex; align-items: center; gap: 8px; }
+.placement-order.hidden { display: none; }
+.placement-order-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.placement-order-input {
+  width: 64px; padding: 4px 8px; text-align: center;
+  background: var(--bg-admin); border: 1px solid var(--border-light);
+  border-radius: 4px; color: var(--text); font-size: 14px;
+}
+</style>
 {% endblock %}

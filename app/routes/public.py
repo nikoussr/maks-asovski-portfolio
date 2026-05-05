@@ -11,11 +11,18 @@ router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse)
 async def index(request: Request, category: str = None, db: Session = Depends(get_db)):
+    category_order_col = {
+        "ai-video":      Project.order_ai_video,
+        "motion-design": Project.order_motion_design,
+        "commercial":    Project.order_commercial,
+    }
+
     if category:
+        order_col = category_order_col.get(category, Project.display_order)
         projects = (
             db.query(Project)
             .filter(Project.is_published == True, Project.categories.contains(category))
-            .order_by(Project.display_order, Project.created_at.desc())
+            .order_by(order_col, Project.created_at.desc())
             .all()
         )
     else:

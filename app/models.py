@@ -21,6 +21,9 @@ class Project(Base):
     categories = Column(String(200), default="")
     is_featured = Column(Boolean, default=False)
     featured_order = Column(Integer, default=0)
+    order_ai_video = Column(Integer, default=0)
+    order_motion_design = Column(Integer, default=0)
+    order_commercial = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     images = relationship(
