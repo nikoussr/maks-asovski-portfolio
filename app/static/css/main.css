@@ -227,6 +227,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .project-video-wrap.project-video-native {
   aspect-ratio: unset;
   overflow: visible;
+  background: transparent;
   display: flex;
   justify-content: center;
 }
@@ -236,8 +237,6 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   height: auto;
   max-height: 82vh;
   display: block;
-  background: #000;
-  object-fit: contain;
 }
 
 .project-video-wrap::after,
