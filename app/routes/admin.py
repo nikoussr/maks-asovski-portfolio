@@ -45,7 +45,9 @@ async def save_upload(file: UploadFile, max_width: int = 1920, quality: int = 85
 
     if ext in _IMAGE_EXTS:
         try:
+            from PIL import ImageOps
             img = Image.open(io.BytesIO(content))
+            img = ImageOps.exif_transpose(img)  # apply EXIF rotation before anything else
             if img.width > max_width:
                 new_height = int(img.height * max_width / img.width)
                 img = img.resize((max_width, new_height), Image.LANCZOS)
