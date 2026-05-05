@@ -227,13 +227,17 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .project-video-wrap.project-video-native {
   aspect-ratio: unset;
   overflow: visible;
+  display: flex;
+  justify-content: center;
 }
 
 .project-video-wrap.project-video-native video {
   width: 100%;
   height: auto;
+  max-height: 82vh;
   display: block;
   background: #000;
+  object-fit: contain;
 }
 
 .project-video-wrap::after,

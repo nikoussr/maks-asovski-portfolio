@@ -36,7 +36,7 @@ def slugify(text: str) -> str:
 
 
 _IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".gif"}
-_VIDEO_EXTS = {".mp4", ".webm", ".mov", ".avi", ".mkv"}
+_VIDEO_EXTS = {".mp4", ".webm", ".mov", ".avi", ".mkv", ".m4v"}
 
 
 async def save_upload(file: UploadFile, max_width: int = 1920, quality: int = 85) -> str:
@@ -66,16 +66,41 @@ async def save_upload(file: UploadFile, max_width: int = 1920, quality: int = 85
 
 
 async def save_video(file: UploadFile) -> str:
+    import asyncio
     content = await file.read()
     ext = Path(file.filename).suffix.lower()
-    if ext not in _VIDEO_EXTS:
-        ext = ".mp4"
-    filename = f"{uuid.uuid4()}{ext}"
-    upload_path = Path(settings.upload_dir) / filename
-    upload_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(upload_path, "wb") as f:
+    upload_dir = Path(settings.upload_dir)
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    uid = uuid.uuid4()
+    # Save original to temp file
+    tmp_path = upload_dir / f"tmp_{uid}{ext if ext in _VIDEO_EXTS else '.mp4'}"
+    with open(tmp_path, "wb") as f:
         f.write(content)
-    return f"/uploads/{filename}"
+
+    # Convert to H.264 MP4: universal browser support + compression + faststart
+    out_filename = f"{uid}.mp4"
+    out_path = upload_dir / out_filename
+    proc = await asyncio.create_subprocess_exec(
+        "ffmpeg", "-y", "-i", str(tmp_path),
+        "-c:v", "libx264", "-crf", "23", "-preset", "medium",
+        "-c:a", "aac", "-b:a", "128k",
+        "-movflags", "+faststart",
+        str(out_path),
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.DEVNULL,
+    )
+    await proc.communicate()
+
+    tmp_path.unlink(missing_ok=True)
+
+    # Fall back to original if ffmpeg failed
+    if not out_path.exists():
+        orig_filename = f"{uid}{ext if ext in _VIDEO_EXTS else '.mp4'}"
+        tmp_path.rename(upload_dir / orig_filename)
+        return f"/uploads/{orig_filename}"
+
+    return f"/uploads/{out_filename}"
 
 
 # ─── Auth ────────────────────────────────────────────────────────────────────

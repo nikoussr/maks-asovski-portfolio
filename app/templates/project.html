@@ -11,7 +11,8 @@
     {% if video.type == 'raw' %}
       {{ video.html | safe }}
     {% elif video.type == 'video' %}
-      <video src="{{ video.url }}" controls playsinline preload="metadata"></video>
+      <video src="{{ video.url }}" controls playsinline preload="metadata"
+             {% if project.cover_image %}poster="{{ project.cover_image }}"{% endif %}></video>
     {% else %}
       <iframe src="{{ video.url }}" frameborder="0" allowfullscreen
               allow="autoplay; fullscreen; picture-in-picture"></iframe>
