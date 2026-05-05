@@ -22,7 +22,7 @@ async def index(request: Request, category: str = None, db: Session = Depends(ge
         projects = (
             db.query(Project)
             .filter(Project.is_published == True, Project.is_featured == True)
-            .order_by(Project.display_order, Project.created_at.desc())
+            .order_by(Project.featured_order, Project.created_at.desc())
             .all()
         )
     return templates.TemplateResponse("index.html", {

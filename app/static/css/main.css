@@ -215,7 +215,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 
 .project-video-wrap {
   position: relative;
-  max-width: 900px;
+  max-width: 1170px;
   width: 100%;
   margin: var(--nav-h, 120px) auto 0;
   background: #111;

@@ -79,10 +79,16 @@
              min="2000" max="2099">
     </div>
     <div class="form-group">
-      <label class="form-label" for="display_order">Порядок</label>
+      <label class="form-label" for="display_order">Порядок в категории</label>
       <input class="form-control" type="number" id="display_order" name="display_order"
              value="{{ project.display_order or 0 }}" min="0">
-      <p class="form-hint">Меньше = выше в сетке</p>
+      <p class="form-hint">Меньше = выше в категории</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="featured_order">Порядок на главной</label>
+      <input class="form-control" type="number" id="featured_order" name="featured_order"
+             value="{{ project.featured_order or 0 }}" min="0">
+      <p class="form-hint">Меньше = выше на главной странице</p>
     </div>
   </div>
 

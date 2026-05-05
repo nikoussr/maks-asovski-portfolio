@@ -155,6 +155,7 @@ async def create_project(
     is_published: Optional[str] = Form(None),
     is_featured: Optional[str] = Form(None),
     display_order: Optional[str] = Form(None),
+    featured_order: Optional[str] = Form(None),
     cover_image: UploadFile = File(None),
     video_file: UploadFile = File(None),
     process_images: List[UploadFile] = File(default=[]),
@@ -165,6 +166,7 @@ async def create_project(
 
     year_int = int(year) if year and year.strip().isdigit() else None
     order_int = int(display_order) if display_order and display_order.strip().isdigit() else 0
+    featured_order_int = int(featured_order) if featured_order and featured_order.strip().isdigit() else 0
     published = is_published is not None
     featured = is_featured is not None
     custom_parts = [r.strip() for r in role_custom.split(",") if r.strip()]
@@ -199,6 +201,7 @@ async def create_project(
         is_published=published,
         is_featured=featured,
         display_order=order_int,
+        featured_order=featured_order_int,
         categories=categories,
     )
     db.add(project)
@@ -244,6 +247,7 @@ async def update_project(
     is_published: Optional[str] = Form(None),
     is_featured: Optional[str] = Form(None),
     display_order: Optional[str] = Form(None),
+    featured_order: Optional[str] = Form(None),
     cover_image: UploadFile = File(None),
     video_file: UploadFile = File(None),
     process_images: List[UploadFile] = File(default=[]),
@@ -258,6 +262,7 @@ async def update_project(
 
     year_int = int(year) if year and year.strip().isdigit() else None
     order_int = int(display_order) if display_order and display_order.strip().isdigit() else 0
+    featured_order_int = int(featured_order) if featured_order and featured_order.strip().isdigit() else 0
     published = is_published is not None
     featured = is_featured is not None
     custom_parts = [r.strip() for r in role_custom.split(",") if r.strip()]
@@ -290,6 +295,7 @@ async def update_project(
     project.is_published = published
     project.is_featured = featured
     project.display_order = order_int
+    project.featured_order = featured_order_int
     project.categories = categories
 
     if cover_image and cover_image.filename:

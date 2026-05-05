@@ -20,6 +20,7 @@ class Project(Base):
     display_order = Column(Integer, default=0)
     categories = Column(String(200), default="")
     is_featured = Column(Boolean, default=False)
+    featured_order = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     images = relationship(
