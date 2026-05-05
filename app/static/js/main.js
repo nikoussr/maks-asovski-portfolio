@@ -50,7 +50,9 @@ function initJustifiedGrid() {
 
   function applyRatio(item, img) {
     if (img.naturalWidth && img.naturalHeight) {
-      item.style.flexBasis = (img.naturalWidth / img.naturalHeight * ROW_H) + 'px';
+      const w = (img.naturalWidth / img.naturalHeight * ROW_H) + 'px';
+      item.style.flexBasis = w;
+      item.style.maxWidth = w;
     }
   }
 

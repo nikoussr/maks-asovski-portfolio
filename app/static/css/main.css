@@ -344,7 +344,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .process-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   filter: brightness(0.9);
   transition: filter 0.3s;

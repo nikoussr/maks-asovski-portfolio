@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import HTTPException
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 
@@ -27,6 +28,12 @@ async def cache_static(request: Request, call_next) -> Response:
     elif path.startswith("/static/"):
         response.headers["Cache-Control"] = "public, max-age=86400"  # 1 day
     return response
+
+
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc: HTTPException):
+    from .templates_config import templates
+    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
 
 
 app.include_router(public_router)
