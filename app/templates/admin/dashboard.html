@@ -27,7 +27,7 @@
   <tbody>
     {% for project in projects %}
     <tr>
-      <td style="color: var(--text-muted); font-size: 12px;">{{ project.display_order }}</td>
+      <td style="color: var(--text-muted); font-size: 12px;">{{ loop.index }}</td>
       <td>
         {% if project.cover_image %}
         <img src="{{ project.cover_image }}" alt="" style="width:60px;height:40px;object-fit:cover;filter:brightness(0.8);">
