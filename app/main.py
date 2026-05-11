@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from .config import settings
 from .database import Base, engine
@@ -38,3 +39,5 @@ async def not_found_handler(request: Request, exc: HTTPException):
 
 app.include_router(public_router)
 app.include_router(admin_router)
+
+Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
