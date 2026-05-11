@@ -25,9 +25,17 @@
 
 **Инфраструктура**
 - Docker Compose (web + PostgreSQL)
-- Автодеплой через github actions
-- Медиафайлы на отдельном диске (Docker bind mount)
-- Cache-Control заголовки для статики и загрузок
+- CI/CD через GitHub Actions (автодеплой при пуше в main)
+- Медиафайлы на отдельном диске (Docker bind mount → `/mnt/data`)
+- Nginx reverse proxy: gzip-сжатие, Cache-Control, SSL/TLS (Let's Encrypt)
+- FFmpeg: конвертация загружаемых видео в H.264 MP4 с `-movflags +faststart`
+
+**Observability (SRE)**
+- Prometheus + Grafana на VPS (self-hosted)
+- Node Exporter: метрики CPU, RAM, диска (`/` и `/mnt/data`)
+- Кастомный счётчик `portfolio_project_views_total` — просмотры каждого проекта по slug
+- FastAPI instrumentation: HTTP запросы, latency p50/p95, статусы ответов
+- Дашборд: uptime приложения, ошибки 4xx/5xx, топ просматриваемых проектов
 
 ---
 ## Скрины
@@ -65,8 +73,10 @@
 | База данных | PostgreSQL 16 |
 | Изображения | Pillow (resize + WebP) |
 | Аутентификация | Cookie + itsdangerous |
-| Инфраструктура | Docker Compose, Nginx |
-| Деплой | Git bare repo + post-receive hook |
+| Медиа | FFmpeg (H.264 конвертация), Pillow (resize + WebP) |
+| Инфраструктура | Docker Compose, Nginx, Let's Encrypt |
+| CI/CD | GitHub Actions |
+| Мониторинг | Prometheus, Grafana, Node Exporter |
 
 ---
 
