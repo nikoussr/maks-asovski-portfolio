@@ -31,10 +31,10 @@
 - FFmpeg: конвертация загружаемых видео в H.264 MP4 с `-movflags +faststart`
 
 **Observability (SRE)**
-- Prometheus + Grafana на VPS (self-hosted)
+- Prometheus + Grafana
 - Node Exporter: метрики CPU, RAM, диска (`/` и `/mnt/data`)
-- Кастомный счётчик `portfolio_project_views_total` — просмотры каждого проекта по slug
-- FastAPI instrumentation: HTTP запросы, latency p50/p95, статусы ответов
+- Просмотры каждого проекта по slug
+- FastAPI instrumentation: HTTP запросы, latency p95
 - Дашборд: uptime приложения, ошибки 4xx/5xx, топ просматриваемых проектов
 
 ---
@@ -59,6 +59,14 @@
 <img width="1032" height="1202" alt="image" src="https://github.com/user-attachments/assets/12b4fad0-a440-4a9a-bbc3-1388b39ca29f" />
 <img width="1034" height="1205" alt="image" src="https://github.com/user-attachments/assets/3f6b07f1-0692-499b-991f-dcf90ebac17e" />
 <img width="1035" height="198" alt="image" src="https://github.com/user-attachments/assets/e7348500-014c-486a-bafc-097354b40b7b" />
+
+---
+
+<img width="963" height="1060" alt="image" src="https://github.com/user-attachments/assets/18d2f287-c431-4b67-a871-0e988b8ed5da" />
+
+---
+
+<img width="2243" height="1311" alt="image" src="https://github.com/user-attachments/assets/21a1443c-cf1b-4b66-8e01-cfca92d28ce9" />
 
 ---
 
