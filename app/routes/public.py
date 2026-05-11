@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
+from prometheus_client import Counter
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -7,6 +8,12 @@ from ..models import Project, SiteSettings
 from ..templates_config import templates
 
 router = APIRouter()
+
+project_views = Counter(
+    "portfolio_project_views_total",
+    "Total views per project",
+    ["slug", "title"],
+)
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -48,6 +55,7 @@ async def project_detail(slug: str, request: Request, db: Session = Depends(get_
     )
     if not project:
         return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+    project_views.labels(slug=project.slug, title=project.title).inc()
     return templates.TemplateResponse("project.html", {"request": request, "project": project})
 
 
