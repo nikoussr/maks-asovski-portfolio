@@ -3,7 +3,6 @@
 ## Ссылка - https://asovskii.com
 
 Сайт-портфолио для видеографа и монтажёра Максима Асовского.
-Минималистичный дизайн, кастомная CMS, автодеплой через git.
 
 **Стек:** Python · FastAPI · PostgreSQL · Docker · Nginx
 
@@ -12,7 +11,7 @@
 ## Возможности
 
 **Публичная часть**
-- Сетка проектов с обложками (shimmer-скелетон при загрузке)
+- Сетка проектов с обложками
 - Страница проекта: видео-плеер, описание, фото процесса с lightbox
 - Страница «О себе» с контактами
 - Поддержка видео: прямая загрузка MP4/WebM/MOV, YouTube, Vimeo, iframe-embed
@@ -26,20 +25,35 @@
 
 **Инфраструктура**
 - Docker Compose (web + PostgreSQL)
-- Автодеплой через git bare repo + post-receive hook
+- Автодеплой через github actions
 - Медиафайлы на отдельном диске (Docker bind mount)
 - Cache-Control заголовки для статики и загрузок
 
 ---
 ## Скрины
-<img width="1270" height="623" alt="image" src="https://github.com/user-attachments/assets/900f8952-71ef-44ce-a8c4-5cf4e8545449" />
-<img width="1248" height="1019" alt="image" src="https://github.com/user-attachments/assets/3da0329b-2b90-4368-a7bb-ed1579f57fc1" />
-<img width="1243" height="1138" alt="image" src="https://github.com/user-attachments/assets/8f0c84e1-5e37-4490-bc62-84364f1962c2" />
-<img width="1248" height="594" alt="image" src="https://github.com/user-attachments/assets/b0485dd3-e936-445a-b8bf-d3f4a834f3f6" />
-<img width="1262" height="429" alt="image" src="https://github.com/user-attachments/assets/83dfa481-4649-470f-af50-b42905a6e268" />
-<img width="1248" height="1202" alt="image" src="https://github.com/user-attachments/assets/e9c25188-1a84-42c4-a7e0-fa1e41ffcff6" />
-<img width="1242" height="1280" alt="image" src="https://github.com/user-attachments/assets/472918a8-f993-4cf5-8c74-23185e11d52c" />
-<img width="1246" height="1278" alt="image" src="https://github.com/user-attachments/assets/17a4d46b-1305-47f2-a831-5edb33550cfe" />
+<img width="1266" height="1018" alt="image" src="https://github.com/user-attachments/assets/cd39329c-17b5-4500-9677-5aba03c53585" />
+
+---
+
+<img width="1248" height="1241" alt="image" src="https://github.com/user-attachments/assets/48731557-bf77-492e-810a-a76dd09cbac5" />
+<img width="1244" height="1149" alt="image" src="https://github.com/user-attachments/assets/f222ed3f-6392-4240-b3fd-b673e6b975a0" />
+
+---
+
+<img width="1254" height="611" alt="image" src="https://github.com/user-attachments/assets/da6d8684-704a-401b-871c-e29928f56d8c" />
+
+---
+
+<img width="1267" height="490" alt="image" src="https://github.com/user-attachments/assets/a9fbf4f5-97dc-4584-b6ac-a59f51757b81" />
+
+---
+
+<img width="1032" height="1202" alt="image" src="https://github.com/user-attachments/assets/12b4fad0-a440-4a9a-bbc3-1388b39ca29f" />
+<img width="1034" height="1205" alt="image" src="https://github.com/user-attachments/assets/3f6b07f1-0692-499b-991f-dcf90ebac17e" />
+<img width="1035" height="198" alt="image" src="https://github.com/user-attachments/assets/e7348500-014c-486a-bafc-097354b40b7b" />
+
+---
+
 
 
 ## Стек
@@ -74,34 +88,3 @@ app/
 docker-compose.yml
 Dockerfile
 ```
-
----
-
-## Локальный запуск
-
-**Требования:** Docker, Docker Compose
-
-```bash
-git clone https://github.com/nikoussr/maks-asovski-portfolio
-cd maks-asovski-portfolio
-
-# Создать .env
-cp .env.example .env
-# Заполнить DATABASE_URL, SECRET_KEY, ADMIN_USERNAME, ADMIN_PASSWORD
-
-docker compose up --build
-```
-
-Сайт: `http://localhost:8001`
-Админка: `http://localhost:8001/admin`
-
----
-
-## Деплой на VPS
-
-Подробная инструкция: [DEPLOY.md](DEPLOY.md)
-
-Краткая схема:
-1. На сервере создаётся bare git-репозиторий с `post-receive` хуком
-2. `git push origin master` → хук запускает `docker compose up --build -d`
-3. Медиафайлы хранятся на отдельном диске через Docker bind mount — не теряются при пересборке
